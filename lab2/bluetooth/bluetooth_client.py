@@ -22,7 +22,7 @@ while True:
         message = "backward"
     elif key == 'd':
         message = "right"
-    elif key == 's':
+    elif key == 'x':
         message = "stop"
     elif key == 'i':
         message = "getCarInfo"
