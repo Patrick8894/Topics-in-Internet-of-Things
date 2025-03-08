@@ -1,6 +1,11 @@
 import socket
 import json
 from picar import control, getCarInfo
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from picar import control, getCarInfo
 
 server_addr = 'D8:3A:DD:9D:A6:07'  # Bluetooth address of your Raspberry Pi
 server_port = 1

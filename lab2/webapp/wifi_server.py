@@ -1,5 +1,9 @@
 import socket
 import json
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from picar import control, getCarInfo
 
 HOST = "172.20.10.3" # IP address of your Raspberry PI
