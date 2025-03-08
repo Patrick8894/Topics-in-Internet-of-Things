@@ -1,6 +1,5 @@
 import socket
 import json
-from picar import control, getCarInfo
 import sys
 import os
 
