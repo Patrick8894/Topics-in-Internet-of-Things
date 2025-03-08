@@ -33,10 +33,12 @@ function updateCarInfo() {
 client.on('data', (data) => {
     try {
         const jsonData = JSON.parse(data);
+        console.log(jsonData);
         // Update the DOM with the parsed JSON data
         document.getElementById("battery").innerText = jsonData.battery;
         document.getElementById("movingDirection").innerText = jsonData.movingDirection;
         document.getElementById("turning").innerText = jsonData.turning;
+        document.getElementById("cpu_temperature").innerText = jsonData.cpu_temperature;
     } catch (e) {
         console.error("Failed to parse JSON:", e);
     }
