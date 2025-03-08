@@ -31,6 +31,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             finally:
                 print("Closing client socket")
                 client.close()
+                control("stop")
     except KeyboardInterrupt:
         print("Server shutting down")
     except Exception as e:

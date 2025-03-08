@@ -31,6 +31,7 @@ with socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOM
             finally:
                 print("Closing client socket")
                 client.close()
+                control("stop")
     except KeyboardInterrupt:
         print("Server shutting down")
     except Exception as e:
