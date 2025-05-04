@@ -4,11 +4,19 @@ import time
 import json
 import pandas as pd
 import numpy as np
+import argparse
 
 #TODO 1: modify the following parameters
 #Starting and end index, modify this
-device_st = 0
-device_end = 5
+parser = argparse.ArgumentParser(description="MQTT Emulator Client")
+parser.add_argument("--device", type=int, default=0, help="device index")
+args = parser.parse_args()
+
+# Set device_st and device_end from arguments
+device_st = args.device
+device_end = args.device + 1
+# device_st = 0
+# device_end = 1
 
 #Path to the dataset, modify this
 data_path = "vehicle_data/vehicle{}.csv"
@@ -59,7 +67,7 @@ class MQTTClient:
             payload = json.dumps(row.to_dict())
 
             # Publish the payload to the specified topic
-            print(f"Publishing: {payload} to {topic}")
+            # print(f"Publishing: {payload} to {topic}")
             self.client.publishAsync(topic, payload, 0, ackCallback=self.customPubackCallback)
 
             # Sleep to simulate real-time data publishing

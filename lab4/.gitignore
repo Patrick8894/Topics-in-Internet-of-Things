@@ -1,4 +1,4 @@
 vehicle_data/
 thing*/certificate.pem.crt
-thing*/private.key
-keys/*.pem
+thing*/
+keys/
