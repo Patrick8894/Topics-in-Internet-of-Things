@@ -1,10 +1,10 @@
-version: "3.8"
-
 services:
   fastapi:
     build: ./app
     ports:
       - "8000:8000"
+    volumes:
+      - ./app:/app
     depends_on:
       - mongo
     environment:
@@ -12,11 +12,22 @@ services:
     restart: always
 
   mongo:
-    image: mongo:5.0
+    image: mongo:4.4.18
     ports:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    restart: always
+  
+  ingestor:
+    build: ./ingestor
+    depends_on:
+      - mongo
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    environment:
+      - SERIAL_PORT=/dev/ttyUSB0
+      - MONGO_URL=mongodb://mongo:27017
     restart: always
 
 volumes:

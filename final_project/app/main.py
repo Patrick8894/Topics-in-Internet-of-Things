@@ -1,21 +1,22 @@
 from fastapi import FastAPI
-from pymongo import MongoClient
-import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from db import get_data
+from models import SensorData
 
 app = FastAPI()
-client = MongoClient(os.environ["MONGO_URL"])
-db = client["mydb"]
-collection = db["items"]
+
+# Mount static folder
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 def read_root():
     return {"message": "Hello from FastAPI on Raspberry Pi!"}
 
-@app.post("/add/{name}")
-def add_item(name: str):
-    collection.insert_one({"name": name})
-    return {"status": "ok", "name": name}
+@app.get("/home")
+def read_root():
+    return FileResponse("static/index.html")
 
-@app.get("/list")
-def list_items():
-    return {"items": list(collection.find({}, {"_id": 0}))}
+@app.get("/api/data", response_model=list[SensorData])
+def fetch_data():
+    return get_data()
