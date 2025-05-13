@@ -1,22 +1,25 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from db import get_data
+from db import get_latest_per_device, get_history
 from models import SensorData
 
 app = FastAPI()
 
-# Mount static folder
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
-def read_root():
-    return {"message": "Hello from FastAPI on Raspberry Pi!"}
-
-@app.get("/home")
-def read_root():
+def serve_home():
     return FileResponse("static/index.html")
 
-@app.get("/api/data", response_model=list[SensorData])
-def fetch_data():
-    return get_data()
+@app.get("/device/{device_id}")
+def serve_device(device_id: str):
+    return FileResponse("static/device.html")
+
+@app.get("/api/latest", response_model=list[SensorData])
+def api_latest():
+    return get_latest_per_device()
+
+@app.get("/api/history/{device_id}", response_model=list[SensorData])
+def api_history(device_id: str):
+    return get_history(device_id)
