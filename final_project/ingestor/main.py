@@ -40,8 +40,8 @@ def read_and_insert(ser):
             collection.insert_one(doc)
             print("Inserted:", doc)
 
-            time.sleep(30) 
-            break 
+            # time.sleep(30) 
+            # break 
 
 # Main loop
 with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=2) as ser:

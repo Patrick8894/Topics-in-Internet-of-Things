@@ -2,7 +2,6 @@
 #include <heltec_unofficial.h>
 #include "DHT.h"
 
-
 #define PAUSE               300
 #define FREQUENCY           905.2       // for US
 #define BANDWIDTH           250.0
@@ -19,15 +18,13 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-uint64_t last_tx = 0;
 uint64_t tx_time;
-uint64_t minimum_pause;
 
 void setup() {
   Serial.begin(115200);
-
   heltec_setup();
-  Serial.println("LoRa TX init");
+
+  Serial.println("LoRa Deep Sleep TX init");
   RADIOLIB_OR_HALT(radio.begin());
   RADIOLIB_OR_HALT(radio.setFrequency(FREQUENCY));
   RADIOLIB_OR_HALT(radio.setBandwidth(BANDWIDTH));
@@ -37,34 +34,34 @@ void setup() {
 
   dht.begin();
   randomSeed(analogRead(0));
+
+  delay(3000);
+
+  String data = get_sensor_data();
+  heltec_led(50); // 50% brightness is plenty for this LED
+  tx_time = millis();
+  RADIOLIB(radio.transmit(data));
+  tx_time = millis() - tx_time;
+  heltec_led(0);
+  if (_radiolib_status == RADIOLIB_ERR_NONE) {
+    Serial.printf("OK (%i ms)\n", (int)tx_time);
+  } else {
+    Serial.printf("fail (%i)\n", _radiolib_status);
+  }
 }
 
 void loop() {
   heltec_loop();
-  
-  bool tx_legal = millis() > last_tx + minimum_pause;
-  // Transmit a packet every PAUSE seconds or when the button is pressed
-  if ((PAUSE && tx_legal && millis() - last_tx > (PAUSE * 1000)) || button.isSingleClick()) {
-    // In case of button click, tell user to wait
-    if (!tx_legal) {
-      Serial.printf("Legal limit, wait %i sec.\n", (int)((minimum_pause - (millis() - last_tx)) / 1000) + 1);
-      return;
-    }
-    String data = get_sensor_data();
-    heltec_led(50); // 50% brightness is plenty for this LED
-    tx_time = millis();
-    RADIOLIB(radio.transmit(data));
-    tx_time = millis() - tx_time;
-    heltec_led(0);
-    if (_radiolib_status == RADIOLIB_ERR_NONE) {
-      Serial.printf("OK (%i ms)\n", (int)tx_time);
-    } else {
-      Serial.printf("fail (%i)\n", _radiolib_status);
-    }
-    // Maximum 1% duty cycle
-    minimum_pause = tx_time * 100;
-    last_tx = millis();
-  }
+
+  // Wait for button release, or it will wake us up again
+  while (digitalRead(BUTTON) == LOW) {}
+  delay (20);
+
+  // Wake up on button press
+  esp_sleep_enable_ext0_wakeup(BUTTON, LOW);
+
+  // Wakes up once in five minutes
+  heltec_deep_sleep(300);
 }
 
 String get_sensor_data() {
