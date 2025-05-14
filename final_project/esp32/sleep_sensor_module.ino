@@ -2,11 +2,12 @@
 #include <heltec_unofficial.h>
 #include "DHT.h"
 
-#define PAUSE               300
 #define FREQUENCY           905.2       // for US
 #define BANDWIDTH           250.0
 #define SPREADING_FACTOR    9
 #define TRANSMIT_POWER      0
+
+#define STEEP_TIME          300
 
 #define DHTPIN 4
 #define DHTTYPE DHT22
@@ -60,8 +61,7 @@ void loop() {
   // Wake up on button press
   esp_sleep_enable_ext0_wakeup(BUTTON, LOW);
 
-  // Wakes up once in five minutes
-  heltec_deep_sleep(300);
+  heltec_deep_sleep(STEEP_TIME);
 }
 
 String get_sensor_data() {

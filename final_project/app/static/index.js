@@ -3,6 +3,8 @@ async function loadLatest() {
   const data = await res.json();
   const container = document.getElementById("latest");
 
+  data.sort((a, b) => a.device_id.localeCompare(b.device_id));
+
   data.forEach(d => {
     const div = document.createElement("div");
     div.innerHTML = `
@@ -17,4 +19,5 @@ async function loadLatest() {
     container.appendChild(div);
   });
 }
+
 loadLatest();
