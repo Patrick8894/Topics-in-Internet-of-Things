@@ -6,7 +6,7 @@ from pymongo import MongoClient
 import os
 
 # Serial setup
-SERIAL_PORT = os.environ.get("SERIAL_PORT", "")
+SERIAL_PORT = os.environ.get("SERIAL_PORT", "/dev/ttyUSB0")
 BAUD_RATE = 115200
 
 # MongoDB setup
@@ -22,7 +22,9 @@ pattern = re.compile(
 def read_and_insert(ser):
     while True:
         line = ser.readline().decode("utf-8", errors="ignore").strip()
+        print("Raw: ", line)
         match = pattern.match(line)
+        print("Match: ", match)
         if match:
             device_id = match.group(1)
             temperature = float(match.group(2))
